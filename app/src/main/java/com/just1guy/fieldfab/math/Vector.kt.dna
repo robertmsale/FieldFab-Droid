@@ -1,0 +1,210 @@
+.import androidx.core.math.MathUtils
+let members = ['x', 'y', 'z', 'w']
+let vec = process.argv[2]
+.class Vector@{vec} (
+for (let i = 0; i < vec; ++i) {
+.   var @{members[i]}: Float@{i+1 == vec ? '' : ','}
+}
+.) {
+.   constructor(other: Vector@{vec}): this(
+for (let i = 0; i < vec; ++i) {
+.   other.@{members[i]}@{i+1 == vec ? '' : ','}
+}
+.   ) {}
+.   fun addScalar(s: Float) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} += s
+}
+.   }
+.   fun addedScalar(s: Float): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} += s
+}
+.       return retval
+.   }
+.   fun add(v: Vector@{vec}) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} += v.@{members[i]}
+}
+.   }
+.   fun added(v: Vector@{vec}): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} += v.@{members[i]}
+}
+.       return retval
+.   }
+.   fun subScalar(s: Float) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} -= s
+}
+.   }
+.   fun subbedScalar(s: Float): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} -= s
+}
+.       return retval
+.   }
+.   fun subtract(v: Vector@{vec}) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} -= v.@{members[i]}
+}
+.   }
+.   fun subtracted(v: Vector@{vec}): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} -= v.@{members[i]}
+}
+.       return retval
+.   }
+.   fun multiplyScalar(s: Float) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} *= s
+}
+.   }
+.   fun multipliedScalar(s: Float): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} *= s
+}
+.       return retval
+.   }
+.   fun multiply(v: Vector@{vec}) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} *= v.@{members[i]}
+}
+.   }
+.   fun multiplied(v: Vector@{vec}): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} *= v.@{members[i]}
+}
+.       return retval
+.   }
+.   fun divideScalar(s: Float) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} /= s
+}
+.   }
+.   fun dividedScalar(s: Float): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} /= s
+}
+.       return retval
+.   }
+.   fun divide(v: Vector@{vec}) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} /= v.@{members[i]}
+}
+.   }
+.   fun divided(v: Vector@{vec}): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} /= v.@{members[i]}
+}
+.       return retval
+.   }
+.   fun zero() {
+for (let i = 0; i < vec; i++) {
+.       @{members[i]} = 0.0f
+}
+.   }
+.   fun clamp(min: Vector@{vec}, max: Vector@{vec}) {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} = MathUtils.clamp(@{members[i]}, min.@{members[i]}, max.@{members[i]})
+}
+.   }
+.   fun clamped(min: Vector@{vec}, max: Vector@{vec}): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} = MathUtils.clamp(@{members[i]}, min.@{members[i]}, max.@{members[i]})
+}
+.       return retval
+.   }
+.   fun floor() {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} = Math.floor(@{members[i]}.toDouble()).toFloat()
+}
+.   }
+.   fun floored(): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} = Math.floor(@{members[i]}.toDouble()).toFloat()
+}
+.       return retval
+.   }
+.   fun ceil() {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} = Math.ceil(@{members[i]}.toDouble()).toFloat()
+}
+.   }
+.   fun ceiled(): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} = Math.ceil(@{members[i]}.toDouble()).toFloat()
+}
+.       return retval
+.   }
+.   fun round() {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} = Math.round(@{members[i]}).toFloat()
+}
+.   }
+.   fun rounded(): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} = Math.round(@{members[i]}).toFloat()
+}
+.       return retval
+.   }
+.   fun roundToZero() {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} = if (@{members[i]} < 0.0f) Math.ceil(@{members[i]}.toDouble()).toFloat() else Math.floor(@{members[i]}.toDouble()).toFloat()
+}
+.   }
+.   fun roundedToZero(): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} = if (@{members[i]} < 0.0f) Math.ceil(@{members[i]}.toDouble()).toFloat() else Math.floor(@{members[i]}.toDouble()).toFloat()
+}
+.       return retval
+.   }
+.   fun negate() {
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]} = - @{members[i]}
+}
+.   }
+.   fun negated(): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+for (let i = 0; i < vec; ++i) {
+.       retval.@{members[i]} = - @{members[i]}
+}
+.       return retval
+.   }
+.   fun length(): Float {
+.       return Math.sqrt(
+for (let i = 0; i < vec; ++i) {
+.           (@{members[i]} * @{members[i]}).toDouble() @{i+1 == vec ? '' : '+'}
+}
+.       ).toFloat()
+.   }
+.   fun manhattanLength(): Float {
+.       return (
+for (let i = 0; i < vec; ++i) {
+.           Math.abs(@{members[i]}) @{i+1 == vec ? '' : '+'}
+}
+.       )
+.   }
+.   fun normalize(): Vector@{vec} {
+.       val len = length()
+.       return dividedScalar(if (len <= 0.0f) 1.0f else len)
+.   }
+.   fun setLength(to: Float) {
+.        normalize()
+.        multiplyScalar(length())
+.   }
+.   // TODO continue from lerp
+.}

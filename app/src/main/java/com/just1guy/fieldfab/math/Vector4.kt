@@ -1,4 +1,9 @@
 import androidx.core.math.MathUtils
+import com.just1guy.fieldfab.math.distance
+import kotlin.math.abs
+import kotlin.math.roundToLong
+import kotlin.math.sqrt
+
 class Vector4 (
    var x: Float,
    var y: Float,
@@ -123,6 +128,21 @@ class Vector4 (
        retval.w /= v.w
        return retval
    }
+   fun dotProduct(v: Vector4): Float {
+       var retval = 0F
+       retval += x * v.x
+       retval += y * v.y
+       retval += z * v.z
+       retval += w * v.w
+       return retval
+   }
+   fun crossProduct(v: Vector4): Float {
+       var retval = x * v.x
+       retval -= y * v.y
+       retval -= z * v.z
+       retval -= w * v.w
+       return retval
+   }
    fun zero() {
        x = 0.0f
        y = 0.0f
@@ -144,59 +164,67 @@ class Vector4 (
        return retval
    }
    fun floor() {
-       x = Math.floor(x.toDouble()).toFloat()
-       y = Math.floor(y.toDouble()).toFloat()
-       z = Math.floor(z.toDouble()).toFloat()
-       w = Math.floor(w.toDouble()).toFloat()
+       x = kotlin.math.floor(x.toDouble()).toFloat()
+       y = kotlin.math.floor(y.toDouble()).toFloat()
+       z = kotlin.math.floor(z.toDouble()).toFloat()
+       w = kotlin.math.floor(w.toDouble()).toFloat()
    }
    fun floored(): Vector4 {
        var retval = Vector4(this)
-       retval.x = Math.floor(x.toDouble()).toFloat()
-       retval.y = Math.floor(y.toDouble()).toFloat()
-       retval.z = Math.floor(z.toDouble()).toFloat()
-       retval.w = Math.floor(w.toDouble()).toFloat()
+       retval.x = kotlin.math.floor(x.toDouble()).toFloat()
+       retval.y = kotlin.math.floor(y.toDouble()).toFloat()
+       retval.z = kotlin.math.floor(z.toDouble()).toFloat()
+       retval.w = kotlin.math.floor(w.toDouble()).toFloat()
        return retval
    }
    fun ceil() {
-       x = Math.ceil(x.toDouble()).toFloat()
-       y = Math.ceil(y.toDouble()).toFloat()
-       z = Math.ceil(z.toDouble()).toFloat()
-       w = Math.ceil(w.toDouble()).toFloat()
+       x = kotlin.math.ceil(x.toDouble()).toFloat()
+       y = kotlin.math.ceil(y.toDouble()).toFloat()
+       z = kotlin.math.ceil(z.toDouble()).toFloat()
+       w = kotlin.math.ceil(w.toDouble()).toFloat()
    }
    fun ceiled(): Vector4 {
        var retval = Vector4(this)
-       retval.x = Math.ceil(x.toDouble()).toFloat()
-       retval.y = Math.ceil(y.toDouble()).toFloat()
-       retval.z = Math.ceil(z.toDouble()).toFloat()
-       retval.w = Math.ceil(w.toDouble()).toFloat()
+       retval.x = kotlin.math.ceil(x.toDouble()).toFloat()
+       retval.y = kotlin.math.ceil(y.toDouble()).toFloat()
+       retval.z = kotlin.math.ceil(z.toDouble()).toFloat()
+       retval.w = kotlin.math.ceil(w.toDouble()).toFloat()
        return retval
    }
    fun round() {
-       x = Math.round(x).toFloat()
-       y = Math.round(y).toFloat()
-       z = Math.round(z).toFloat()
-       w = Math.round(w).toFloat()
+       x = x.roundToLong().toFloat()
+       y = y.roundToLong().toFloat()
+       z = z.roundToLong().toFloat()
+       w = w.roundToLong().toFloat()
    }
    fun rounded(): Vector4 {
        var retval = Vector4(this)
-       retval.x = Math.round(x).toFloat()
-       retval.y = Math.round(y).toFloat()
-       retval.z = Math.round(z).toFloat()
-       retval.w = Math.round(w).toFloat()
+       retval.x = x.roundToLong().toFloat()
+       retval.y = y.roundToLong().toFloat()
+       retval.z = z.roundToLong().toFloat()
+       retval.w = w.roundToLong().toFloat()
        return retval
    }
    fun roundToZero() {
-       x = if (x < 0.0f) Math.ceil(x.toDouble()).toFloat() else Math.floor(x.toDouble()).toFloat()
-       y = if (y < 0.0f) Math.ceil(y.toDouble()).toFloat() else Math.floor(y.toDouble()).toFloat()
-       z = if (z < 0.0f) Math.ceil(z.toDouble()).toFloat() else Math.floor(z.toDouble()).toFloat()
-       w = if (w < 0.0f) Math.ceil(w.toDouble()).toFloat() else Math.floor(w.toDouble()).toFloat()
+       x = if (x < 0.0f) kotlin.math.ceil(x.toDouble())
+           .toFloat() else kotlin.math.floor(x.toDouble()).toFloat()
+       y = if (y < 0.0f) kotlin.math.ceil(y.toDouble())
+           .toFloat() else kotlin.math.floor(y.toDouble()).toFloat()
+       z = if (z < 0.0f) kotlin.math.ceil(z.toDouble())
+           .toFloat() else kotlin.math.floor(z.toDouble()).toFloat()
+       w = if (w < 0.0f) kotlin.math.ceil(w.toDouble())
+           .toFloat() else kotlin.math.floor(w.toDouble()).toFloat()
    }
    fun roundedToZero(): Vector4 {
        var retval = Vector4(this)
-       retval.x = if (x < 0.0f) Math.ceil(x.toDouble()).toFloat() else Math.floor(x.toDouble()).toFloat()
-       retval.y = if (y < 0.0f) Math.ceil(y.toDouble()).toFloat() else Math.floor(y.toDouble()).toFloat()
-       retval.z = if (z < 0.0f) Math.ceil(z.toDouble()).toFloat() else Math.floor(z.toDouble()).toFloat()
-       retval.w = if (w < 0.0f) Math.ceil(w.toDouble()).toFloat() else Math.floor(w.toDouble()).toFloat()
+       retval.x = if (x < 0.0f) kotlin.math.ceil(x.toDouble())
+           .toFloat() else kotlin.math.floor(x.toDouble()).toFloat()
+       retval.y = if (y < 0.0f) kotlin.math.ceil(y.toDouble())
+           .toFloat() else kotlin.math.floor(y.toDouble()).toFloat()
+       retval.z = if (z < 0.0f) kotlin.math.ceil(z.toDouble())
+           .toFloat() else kotlin.math.floor(z.toDouble()).toFloat()
+       retval.w = if (w < 0.0f) kotlin.math.ceil(w.toDouble())
+           .toFloat() else kotlin.math.floor(w.toDouble()).toFloat()
        return retval
    }
    fun negate() {
@@ -213,8 +241,16 @@ class Vector4 (
        retval.w = - w
        return retval
    }
+   fun lengthSquared(): Float {
+       return (
+           (x * x).toDouble() +
+           (y * y).toDouble() +
+           (z * z).toDouble() +
+           (w * w).toDouble() 
+       ).toFloat()
+   }
    fun length(): Float {
-       return Math.sqrt(
+       return sqrt(
            (x * x).toDouble() +
            (y * y).toDouble() +
            (z * z).toDouble() +
@@ -223,12 +259,21 @@ class Vector4 (
    }
    fun manhattanLength(): Float {
        return (
-           Math.abs(x) +
-           Math.abs(y) +
-           Math.abs(z) +
-           Math.abs(w) 
+           abs(x) +
+           abs(y) +
+           abs(z) +
+           abs(w)
        )
    }
+   fun distanceSquared(to: Vector4): Float {
+       return (
+           (x.distance(to.x) * x.distance(to.x)) +
+           (y.distance(to.y) * y.distance(to.y)) +
+           (z.distance(to.z) * z.distance(to.z)) +
+           (w.distance(to.w) * w.distance(to.w)) 
+       )
+   }
+   fun distance(to: Vector4): Float = kotlin.math.sqrt(distanceSquared(to))
    fun normalize(): Vector4 {
        val len = length()
        return dividedScalar(if (len <= 0.0f) 1.0f else len)
@@ -237,5 +282,15 @@ class Vector4 (
         normalize()
         multiplyScalar(length())
    }
-   // TODO continue from lerp
+   fun lerp(v: Vector4, alpha: Float) {
+           x += (v.x - x) * alpha
+           y += (v.y - y) * alpha
+           z += (v.z - z) * alpha
+           w += (v.w - w) * alpha
+   }
+   fun lerped(v: Vector4, alpha: Float): Vector4 {
+       var retval = Vector4(this)
+       retval.lerp(v, alpha)
+       return retval
+   }
 }

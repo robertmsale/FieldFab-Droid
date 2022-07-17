@@ -6,3 +6,7 @@ enum class DuctFace(val face: Int) {
     LEFT(2),
     RIGHT(3);
 }
+
+enum class DuctFaceALL {
+    FRONT, BACK, LEFT, RIGHT, ALL
+}

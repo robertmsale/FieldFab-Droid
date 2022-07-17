@@ -107,6 +107,20 @@ for (let i = 0; i < vec; ++i) {
 }
 .       return retval
 .   }
+.   fun dotProduct(v: Vector@{vec}): Float {
+.       var retval = 0F
+for (let i = 0; i < vec; ++i) {
+.       retval += @{members[i]} * v.@{members[i]}
+}
+.       return retval
+.   }
+.   fun crossProduct(v: Vector@{vec}): Float {
+.       var retval = @{members[0]} * v.@{members[0]}
+for (let i = 1; i < vec; ++i) {
+.       retval -= @{members[i]} * v.@{members[i]}
+}
+.       return retval
+.   }
 .   fun zero() {
 for (let i = 0; i < vec; i++) {
 .       @{members[i]} = 0.0f
@@ -184,6 +198,13 @@ for (let i = 0; i < vec; ++i) {
 }
 .       return retval
 .   }
+.   fun lengthSquared(): Float {
+.       return (
+for (let i = 0; i < vec; ++i) {
+.           (@{members[i]} * @{members[i]}).toDouble() @{i+1 == vec ? '' : '+'}
+}
+.       ).toFloat()
+.   }
 .   fun length(): Float {
 .       return Math.sqrt(
 for (let i = 0; i < vec; ++i) {
@@ -198,6 +219,15 @@ for (let i = 0; i < vec; ++i) {
 }
 .       )
 .   }
+.   fun distanceSquared(to: Vector@{vec}): Float {
+.       return (
+for (let i = 0; i < vec; ++i) {
+    let x = members[i]
+.           (@{x}.distance(to.@{x}) * @{x}.distance(to.@{x})) @{i+1 == vec ? '' : '+'}
+}
+.       )
+.   }
+.   fun distance(to: Vector@{vec}): Float = kotlin.math.sqrt(distanceSquared(to))
 .   fun normalize(): Vector@{vec} {
 .       val len = length()
 .       return dividedScalar(if (len <= 0.0f) 1.0f else len)
@@ -206,5 +236,14 @@ for (let i = 0; i < vec; ++i) {
 .        normalize()
 .        multiplyScalar(length())
 .   }
-.   // TODO continue from lerp
+.   fun lerp(v: Vector@{vec}, alpha: Float) {
+for (let i = 0; i < vec; ++i) {
+.           @{members[i]} += (v.@{members[i]} - @{members[i]}) * alpha
+}
+.   }
+.   fun lerped(v: Vector@{vec}, alpha: Float): Vector@{vec} {
+.       var retval = Vector@{vec}(this)
+.       retval.lerp(v, alpha)
+.       return retval
+.   }
 .}

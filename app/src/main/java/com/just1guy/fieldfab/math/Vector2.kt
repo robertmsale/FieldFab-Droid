@@ -1,4 +1,9 @@
 import androidx.core.math.MathUtils
+import com.just1guy.fieldfab.math.distance
+import kotlin.math.abs
+import kotlin.math.roundToLong
+import kotlin.math.sqrt
+
 class Vector2 (
    var x: Float,
    var y: Float
@@ -87,6 +92,17 @@ class Vector2 (
        retval.y /= v.y
        return retval
    }
+   fun dotProduct(v: Vector2): Float {
+       var retval = 0F
+       retval += x * v.x
+       retval += y * v.y
+       return retval
+   }
+   fun crossProduct(v: Vector2): Float {
+       var retval = x * v.x
+       retval -= y * v.y
+       return retval
+   }
    fun zero() {
        x = 0.0f
        y = 0.0f
@@ -102,43 +118,47 @@ class Vector2 (
        return retval
    }
    fun floor() {
-       x = Math.floor(x.toDouble()).toFloat()
-       y = Math.floor(y.toDouble()).toFloat()
+       x = kotlin.math.floor(x.toDouble()).toFloat()
+       y = kotlin.math.floor(y.toDouble()).toFloat()
    }
    fun floored(): Vector2 {
        var retval = Vector2(this)
-       retval.x = Math.floor(x.toDouble()).toFloat()
-       retval.y = Math.floor(y.toDouble()).toFloat()
+       retval.x = kotlin.math.floor(x.toDouble()).toFloat()
+       retval.y = kotlin.math.floor(y.toDouble()).toFloat()
        return retval
    }
    fun ceil() {
-       x = Math.ceil(x.toDouble()).toFloat()
-       y = Math.ceil(y.toDouble()).toFloat()
+       x = kotlin.math.ceil(x.toDouble()).toFloat()
+       y = kotlin.math.ceil(y.toDouble()).toFloat()
    }
    fun ceiled(): Vector2 {
        var retval = Vector2(this)
-       retval.x = Math.ceil(x.toDouble()).toFloat()
-       retval.y = Math.ceil(y.toDouble()).toFloat()
+       retval.x = kotlin.math.ceil(x.toDouble()).toFloat()
+       retval.y = kotlin.math.ceil(y.toDouble()).toFloat()
        return retval
    }
    fun round() {
-       x = Math.round(x).toFloat()
-       y = Math.round(y).toFloat()
+       x = x.roundToLong().toFloat()
+       y = y.roundToLong().toFloat()
    }
    fun rounded(): Vector2 {
        var retval = Vector2(this)
-       retval.x = Math.round(x).toFloat()
-       retval.y = Math.round(y).toFloat()
+       retval.x = x.roundToLong().toFloat()
+       retval.y = y.roundToLong().toFloat()
        return retval
    }
    fun roundToZero() {
-       x = if (x < 0.0f) Math.ceil(x.toDouble()).toFloat() else Math.floor(x.toDouble()).toFloat()
-       y = if (y < 0.0f) Math.ceil(y.toDouble()).toFloat() else Math.floor(y.toDouble()).toFloat()
+       x = if (x < 0.0f) kotlin.math.ceil(x.toDouble())
+           .toFloat() else kotlin.math.floor(x.toDouble()).toFloat()
+       y = if (y < 0.0f) kotlin.math.ceil(y.toDouble())
+           .toFloat() else kotlin.math.floor(y.toDouble()).toFloat()
    }
    fun roundedToZero(): Vector2 {
        var retval = Vector2(this)
-       retval.x = if (x < 0.0f) Math.ceil(x.toDouble()).toFloat() else Math.floor(x.toDouble()).toFloat()
-       retval.y = if (y < 0.0f) Math.ceil(y.toDouble()).toFloat() else Math.floor(y.toDouble()).toFloat()
+       retval.x = if (x < 0.0f) kotlin.math.ceil(x.toDouble())
+           .toFloat() else kotlin.math.floor(x.toDouble()).toFloat()
+       retval.y = if (y < 0.0f) kotlin.math.ceil(y.toDouble())
+           .toFloat() else kotlin.math.floor(y.toDouble()).toFloat()
        return retval
    }
    fun negate() {
@@ -151,18 +171,31 @@ class Vector2 (
        retval.y = - y
        return retval
    }
+   fun lengthSquared(): Float {
+       return (
+           (x * x).toDouble() +
+           (y * y).toDouble() 
+       ).toFloat()
+   }
    fun length(): Float {
-       return Math.sqrt(
+       return sqrt(
            (x * x).toDouble() +
            (y * y).toDouble() 
        ).toFloat()
    }
    fun manhattanLength(): Float {
        return (
-           Math.abs(x) +
-           Math.abs(y) 
+           abs(x) +
+           abs(y)
        )
    }
+   fun distanceSquared(to: Vector2): Float {
+       return (
+           (x.distance(to.x) * x.distance(to.x)) +
+           (y.distance(to.y) * y.distance(to.y)) 
+       )
+   }
+   fun distance(to: Vector2): Float = kotlin.math.sqrt(distanceSquared(to))
    fun normalize(): Vector2 {
        val len = length()
        return dividedScalar(if (len <= 0.0f) 1.0f else len)
@@ -171,5 +204,13 @@ class Vector2 (
         normalize()
         multiplyScalar(length())
    }
-   // TODO continue from lerp
+   fun lerp(v: Vector2, alpha: Float) {
+           x += (v.x - x) * alpha
+           y += (v.y - y) * alpha
+   }
+   fun lerped(v: Vector2, alpha: Float): Vector2 {
+       var retval = Vector2(this)
+       retval.lerp(v, alpha)
+       return retval
+   }
 }

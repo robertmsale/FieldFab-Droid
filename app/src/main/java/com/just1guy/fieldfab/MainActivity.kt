@@ -17,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.just1guy.fieldfab.appstate.*
+import com.just1guy.fieldfab.pages.DuctEditor
 import com.just1guy.fieldfab.pages.MainMenu
 import com.just1guy.fieldfab.pages.NewSession
 import com.just1guy.fieldfab.ui.theme.FieldFabTheme
@@ -54,7 +55,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             FieldFabTheme {
                 val kAppState = rememberKotlinDefaultAppState()
-                val VM = remember { mutableStateOf(AppState()) }
+                val VM = remember { mutableStateOf(AppState.TEST_STATE) }
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
@@ -105,7 +106,7 @@ class MainActivity : ComponentActivity() {
                                 NewSession(kAppState = kAppState, state = VM)
                             }
                             composable("Duct-Editor") {
-                                Text("You are now editing duct")
+                                DuctEditor(kAppData = kAppState, state = VM)
                             }
                         }
                     }

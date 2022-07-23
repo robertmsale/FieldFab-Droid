@@ -95,6 +95,17 @@ data class AppState(
     companion object {
         // TODO: Initialize certain values from persistent storage
         val INITIAL_STATE = AppState()
-
+        val TEST_STATE = AppState(
+            ductData = listOf(DuctData(
+                name = "Test Duct",
+                width = 0.05F,
+                depth = 0.05F,
+                length = 0.05F,
+                offsetx = 0.005F,
+                offsety = 0.005F,
+                twidth = 0.05F,
+                tdepth = 0.05F
+            ))
+        )
     }
 }

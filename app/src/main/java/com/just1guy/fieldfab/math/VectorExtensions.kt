@@ -7,8 +7,14 @@ import androidx.core.math.MathUtils.clamp
 import java.lang.Math.sqrt
 import kotlin.math.abs
 
+enum class V2Axis {X, Y}
+enum class V3Axis {X, Y, Z}
+enum class V4Axis {X, Y, Z, W}
+
 fun Float.distance(to: Float): Float =
     if (this < to) abs(to - this) else abs(this - to)
+
+fun Float.clamp(min: Float, max: Float): Float = clamp(this, min, max)
 
 fun Vector2.copy(): Vector2 = Vector2(x, y)
 fun Vector3.copy(): Vector3 = Vector3(x, y, z)
@@ -32,6 +38,12 @@ fun Vector3.angle(to: Vector3): Float {
     if (d == 0F) return kotlin.math.PI.toFloat() / 2F
     val theta = dotProduct(to) / d
     return kotlin.math.acos(clamp(theta, -1F, 1F))
+}
+
+operator fun Vector3.get(axis: V3Axis): Float = when (axis) {
+    V3Axis.X -> x
+    V3Axis.Y -> y
+    V3Axis.Z -> z
 }
 
 fun Vector2.zeroed(x: Boolean = false, y: Boolean = false): Vector2 =

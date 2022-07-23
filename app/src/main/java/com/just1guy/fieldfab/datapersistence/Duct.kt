@@ -90,7 +90,16 @@ data class DuctFaces (
     val back: DuctFaceMeasure,
     val left: DuctFaceMeasure,
     val right: DuctFaceMeasure,
-) {}
+) {
+    operator fun get(face: String): DuctFaceMeasure =
+        when (face) {
+            "Front" -> front
+            "Back" -> back
+            "Left" -> left
+            else -> right
+        }
+
+}
 
 enum class DuctMeasurement {
     WIDTH, DEPTH, LENGTH, OFFSET_X, OFFSET_Y, T_WIDTH, T_DEPTH

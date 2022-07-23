@@ -1,4 +1,5 @@
 import androidx.core.math.MathUtils
+import com.just1guy.fieldfab.math.copy
 import com.just1guy.fieldfab.math.distance
 import kotlin.math.abs
 import kotlin.math.roundToLong
@@ -209,7 +210,7 @@ class Vector2 (
            y += (v.y - y) * alpha
    }
    fun lerped(v: Vector2, alpha: Float): Vector2 {
-       var retval = Vector2(this)
+       var retval = copy()
        retval.lerp(v, alpha)
        return retval
    }

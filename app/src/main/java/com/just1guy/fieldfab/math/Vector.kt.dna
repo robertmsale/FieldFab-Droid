@@ -1,120 +1,134 @@
 .import androidx.core.math.MathUtils
+.import com.just1guy.fieldfab.math.distance
 let members = ['x', 'y', 'z', 'w']
 let vec = process.argv[2]
-.class Vector@{vec} (
+let dtypes = ["Float", "Double", "Int"]
+let operator = ["+", "-", "*", "/"]
+let opname = ["plus", "minus", "times", "div"]
+let opacc = ["added", "subtracted", "multiplied", "divided"]
+for (let p = 0; p < dtypes.length; ++p) {
+.@kotlinx.serialization.Serializable
+.data class Vector@{vec}@{dtypes[p]} (
 for (let i = 0; i < vec; ++i) {
-.   var @{members[i]}: Float@{i+1 == vec ? '' : ','}
+.   var @{members[i]}: @{dtypes[p]} = 0.to@{dtypes[p]}()@{i+1 == vec ? '' : ','}
 }
 .) {
-.   constructor(other: Vector@{vec}): this(
+.   constructor(other: Vector@{vec}@{dtypes[p]}): this(
 for (let i = 0; i < vec; ++i) {
 .   other.@{members[i]}@{i+1 == vec ? '' : ','}
 }
 .   ) {}
-.   fun addScalar(s: Float) {
+.
+.   fun copy(): Vector@{vec}@{dtypes[p]} = Vector@{vec}@{dtypes[p]}(
+for (let i = 0; i < vec; ++i) {
+.       @{members[i]},
+}
+.   )
+.
+.   fun addScalar(s: @{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} += s
 }
 .   }
-.   fun addedScalar(s: Float): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun addedScalar(s: @{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} += s
 }
 .       return retval
 .   }
-.   fun add(v: Vector@{vec}) {
+.   fun add(v: Vector@{vec}@{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} += v.@{members[i]}
 }
 .   }
-.   fun added(v: Vector@{vec}): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun added(v: Vector@{vec}@{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} += v.@{members[i]}
 }
 .       return retval
 .   }
-.   fun subScalar(s: Float) {
+.   fun subScalar(s: @{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} -= s
 }
 .   }
-.   fun subbedScalar(s: Float): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun subbedScalar(s: @{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} -= s
 }
 .       return retval
 .   }
-.   fun subtract(v: Vector@{vec}) {
+.   fun subtract(v: Vector@{vec}@{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} -= v.@{members[i]}
 }
 .   }
-.   fun subtracted(v: Vector@{vec}): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun subtracted(v: Vector@{vec}@{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} -= v.@{members[i]}
 }
 .       return retval
 .   }
-.   fun multiplyScalar(s: Float) {
+.   fun multiplyScalar(s: @{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} *= s
 }
 .   }
-.   fun multipliedScalar(s: Float): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun multipliedScalar(s: @{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} *= s
 }
 .       return retval
 .   }
-.   fun multiply(v: Vector@{vec}) {
+.   fun multiply(v: Vector@{vec}@{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} *= v.@{members[i]}
 }
 .   }
-.   fun multiplied(v: Vector@{vec}): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun multiplied(v: Vector@{vec}@{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} *= v.@{members[i]}
 }
 .       return retval
 .   }
-.   fun divideScalar(s: Float) {
+.   fun divideScalar(s: @{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} /= s
 }
 .   }
-.   fun dividedScalar(s: Float): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun dividedScalar(s: @{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} /= s
 }
 .       return retval
 .   }
-.   fun divide(v: Vector@{vec}) {
+.   fun divide(v: Vector@{vec}@{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} /= v.@{members[i]}
 }
 .   }
-.   fun divided(v: Vector@{vec}): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun divided(v: Vector@{vec}@{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} /= v.@{members[i]}
 }
 .       return retval
 .   }
-.   fun dotProduct(v: Vector@{vec}): Float {
-.       var retval = 0F
+.   fun dotProduct(v: Vector@{vec}@{dtypes[p]}): @{dtypes[p]} {
+.       var retval = 0.to@{dtypes[p]}()
 for (let i = 0; i < vec; ++i) {
 .       retval += @{members[i]} * v.@{members[i]}
 }
 .       return retval
 .   }
-.   fun crossProduct(v: Vector@{vec}): Float {
+.   fun crossProduct(v: Vector@{vec}@{dtypes[p]}): @{dtypes[p]} {
 .       var retval = @{members[0]} * v.@{members[0]}
 for (let i = 1; i < vec; ++i) {
 .       retval -= @{members[i]} * v.@{members[i]}
@@ -123,16 +137,26 @@ for (let i = 1; i < vec; ++i) {
 .   }
 .   fun zero() {
 for (let i = 0; i < vec; i++) {
-.       @{members[i]} = 0.0f
+.       @{members[i]} = 0.to@{dtypes[p]}()
 }
 .   }
-.   fun clamp(min: Vector@{vec}, max: Vector@{vec}) {
+.   fun zeroed(
+for (let i = 0; i < vec; i++) {
+.       @{members[i]}: Boolean = false,
+}
+.   ): Vector@{vec}@{dtypes[p]} = copy().multiplied(Vector@{vec}@{dtypes[p]}(
+for (let i = 0; i < vec; i++) {
+.       if (@{members[i]}) 0.to@{dtypes[p]}() else 1.to@{dtypes[p]}(),
+}
+.   ))
+.
+.   fun clamp(min: Vector@{vec}@{dtypes[p]}, max: Vector@{vec}@{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .       @{members[i]} = MathUtils.clamp(@{members[i]}, min.@{members[i]}, max.@{members[i]})
 }
 .   }
-.   fun clamped(min: Vector@{vec}, max: Vector@{vec}): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun clamped(min: Vector@{vec}@{dtypes[p]}, max: Vector@{vec}@{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} = MathUtils.clamp(@{members[i]}, min.@{members[i]}, max.@{members[i]})
 }
@@ -140,49 +164,49 @@ for (let i = 0; i < vec; ++i) {
 .   }
 .   fun floor() {
 for (let i = 0; i < vec; ++i) {
-.       @{members[i]} = Math.floor(@{members[i]}.toDouble()).toFloat()
+.       @{members[i]} = Math.floor(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .   }
-.   fun floored(): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun floored(): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
-.       retval.@{members[i]} = Math.floor(@{members[i]}.toDouble()).toFloat()
+.       retval.@{members[i]} = Math.floor(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .       return retval
 .   }
 .   fun ceil() {
 for (let i = 0; i < vec; ++i) {
-.       @{members[i]} = Math.ceil(@{members[i]}.toDouble()).toFloat()
+.       @{members[i]} = Math.ceil(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .   }
-.   fun ceiled(): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun ceiled(): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
-.       retval.@{members[i]} = Math.ceil(@{members[i]}.toDouble()).toFloat()
+.       retval.@{members[i]} = Math.ceil(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .       return retval
 .   }
 .   fun round() {
 for (let i = 0; i < vec; ++i) {
-.       @{members[i]} = Math.round(@{members[i]}).toFloat()
+.       @{members[i]} = Math.round(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .   }
-.   fun rounded(): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun rounded(): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
-.       retval.@{members[i]} = Math.round(@{members[i]}).toFloat()
+.       retval.@{members[i]} = Math.round(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .       return retval
 .   }
 .   fun roundToZero() {
 for (let i = 0; i < vec; ++i) {
-.       @{members[i]} = if (@{members[i]} < 0.0f) Math.ceil(@{members[i]}.toDouble()).toFloat() else Math.floor(@{members[i]}.toDouble()).toFloat()
+.       @{members[i]} = if (@{members[i]} < 0.to@{dtypes[p]}()) Math.ceil(@{members[i]}.toDouble()).to@{dtypes[p]}() else Math.floor(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .   }
-.   fun roundedToZero(): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun roundedToZero(): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
-.       retval.@{members[i]} = if (@{members[i]} < 0.0f) Math.ceil(@{members[i]}.toDouble()).toFloat() else Math.floor(@{members[i]}.toDouble()).toFloat()
+.       retval.@{members[i]} = if (@{members[i]} < 0.to@{dtypes[p]}()) Math.ceil(@{members[i]}.toDouble()).to@{dtypes[p]}() else Math.floor(@{members[i]}.toDouble()).to@{dtypes[p]}()
 }
 .       return retval
 .   }
@@ -191,35 +215,35 @@ for (let i = 0; i < vec; ++i) {
 .       @{members[i]} = - @{members[i]}
 }
 .   }
-.   fun negated(): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun negated(): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 for (let i = 0; i < vec; ++i) {
 .       retval.@{members[i]} = - @{members[i]}
 }
 .       return retval
 .   }
-.   fun lengthSquared(): Float {
+.   fun lengthSquared(): @{dtypes[p]} {
 .       return (
 for (let i = 0; i < vec; ++i) {
 .           (@{members[i]} * @{members[i]}).toDouble() @{i+1 == vec ? '' : '+'}
 }
-.       ).toFloat()
+.       ).to@{dtypes[p]}()
 .   }
-.   fun length(): Float {
+.   fun length(): @{dtypes[p]} {
 .       return Math.sqrt(
 for (let i = 0; i < vec; ++i) {
 .           (@{members[i]} * @{members[i]}).toDouble() @{i+1 == vec ? '' : '+'}
 }
-.       ).toFloat()
+.       ).to@{dtypes[p]}()
 .   }
-.   fun manhattanLength(): Float {
+.   fun manhattanLength(): @{dtypes[p]} {
 .       return (
 for (let i = 0; i < vec; ++i) {
 .           Math.abs(@{members[i]}) @{i+1 == vec ? '' : '+'}
 }
 .       )
 .   }
-.   fun distanceSquared(to: Vector@{vec}): Float {
+.   fun distanceSquared(to: Vector@{vec}@{dtypes[p]}): @{dtypes[p]} {
 .       return (
 for (let i = 0; i < vec; ++i) {
     let x = members[i]
@@ -227,23 +251,29 @@ for (let i = 0; i < vec; ++i) {
 }
 .       )
 .   }
-.   fun distance(to: Vector@{vec}): Float = kotlin.math.sqrt(distanceSquared(to))
-.   fun normalize(): Vector@{vec} {
+.   fun distance(to: Vector@{vec}@{dtypes[p]}): @{dtypes[p]} = kotlin.math.sqrt(distanceSquared(to).toDouble()).to@{dtypes[p]}()
+.   fun normalize(): Vector@{vec}@{dtypes[p]} {
 .       val len = length()
-.       return dividedScalar(if (len <= 0.0f) 1.0f else len)
+.       return dividedScalar(if (len <= 0.to@{dtypes[p]}()) 0.to@{dtypes[p]}() else len)
 .   }
-.   fun setLength(to: Float) {
+.   fun setLength(to: @{dtypes[p]}) {
 .        normalize()
 .        multiplyScalar(length())
 .   }
-.   fun lerp(v: Vector@{vec}, alpha: Float) {
+.   fun lerp(v: Vector@{vec}@{dtypes[p]}, alpha: @{dtypes[p]}) {
 for (let i = 0; i < vec; ++i) {
 .           @{members[i]} += (v.@{members[i]} - @{members[i]}) * alpha
 }
 .   }
-.   fun lerped(v: Vector@{vec}, alpha: Float): Vector@{vec} {
-.       var retval = Vector@{vec}(this)
+.   fun lerped(v: Vector@{vec}@{dtypes[p]}, alpha: @{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.       var retval = Vector@{vec}@{dtypes[p]}(this)
 .       retval.lerp(v, alpha)
 .       return retval
 .   }
+for (let i = 0; i < operator.length; ++i) {
+.   operator fun @{opname[i]}(v: Vector@{vec}@{dtypes[p]}): Vector@{vec}@{dtypes[p]} {
+.      return this.@{opacc[i]}(v)
+.   }
+}
 .}
+}

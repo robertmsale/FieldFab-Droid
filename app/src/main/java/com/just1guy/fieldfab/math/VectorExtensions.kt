@@ -1,10 +1,15 @@
 package com.just1guy.fieldfab.math
 
-import Vector2
-import Vector3
-import Vector4
+import Vector2Float
+import Vector3Float
+import Vector4Float
+import Vector2Double
+import Vector3Double
+import Vector4Double
+import Vector2Int
+import Vector3Int
+import Vector4Int
 import androidx.core.math.MathUtils.clamp
-import java.lang.Math.sqrt
 import kotlin.math.abs
 
 enum class V2Axis {X, Y}
@@ -13,42 +18,37 @@ enum class V4Axis {X, Y, Z, W}
 
 fun Float.distance(to: Float): Float =
     if (this < to) abs(to - this) else abs(this - to)
+fun Double.distance(to: Double): Double =
+    if (this < to) abs(to - this) else abs(this - to)
+fun Int.distance(to: Int): Int =
+    if (this < to) abs(to - this) else abs(this - to)
 
 fun Float.clamp(min: Float, max: Float): Float = clamp(this, min, max)
+fun Double.clamp(min: Double, max: Double): Double = clamp(this, min, max)
+fun Int.clamp(min: Int, max: Int): Int = clamp(this, min, max)
 
-fun Vector2.copy(): Vector2 = Vector2(x, y)
-fun Vector3.copy(): Vector3 = Vector3(x, y, z)
-fun Vector4.copy(): Vector4 = Vector4(x, y, z, w)
-
-fun Vector3.cross(with: Vector3) {
+fun Vector3Float.cross(with: Vector3Float) {
     val nx = y * with.z - z * with.y
     val ny = z * with.x - x * with.z
     val nz = x * with.y - y * with.x
     x = nx; y = ny; z = nz
 }
 
-fun Vector3.crossed(with: Vector3): Vector3 {
+fun Vector3Float.crossed(with: Vector3Float): Vector3Float {
     var retval = copy()
     retval.cross(with)
     return retval
 }
 
-fun Vector3.angle(to: Vector3): Float {
+fun Vector3Float.angle(to: Vector3Float): Float {
     val d = kotlin.math.sqrt(lengthSquared() * to.lengthSquared())
     if (d == 0F) return kotlin.math.PI.toFloat() / 2F
     val theta = dotProduct(to) / d
     return kotlin.math.acos(clamp(theta, -1F, 1F))
 }
 
-operator fun Vector3.get(axis: V3Axis): Float = when (axis) {
+operator fun Vector3Float.get(axis: V3Axis): Float = when (axis) {
     V3Axis.X -> x
     V3Axis.Y -> y
     V3Axis.Z -> z
 }
-
-fun Vector2.zeroed(x: Boolean = false, y: Boolean = false): Vector2 =
-    copy().multiplied(Vector2(if (x) 0F else 1F, if (y) 0F else 1F))
-fun Vector3.zeroed(x: Boolean = false, y: Boolean = false, z: Boolean = false): Vector3 =
-    copy().multiplied(Vector3(if (x) 0F else 1F, if (y) 0F else 1F, if (z) 0F else 1F))
-fun Vector4.zeroed(x: Boolean = false, y: Boolean = false, z: Boolean = false, w: Boolean = false): Vector4 =
-    copy().multiplied(Vector4(if (x) 0F else 1F, if (y) 0F else 1F, if (z) 0F else 1F, if (w) 0F else 1F))

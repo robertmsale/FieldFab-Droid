@@ -1,8 +1,7 @@
 package com.just1guy.fieldfab.pages
 
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
+import android.graphics.Rect
+import android.view.ViewTreeObserver
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -15,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -24,8 +24,8 @@ import com.just1guy.fieldfab.appstate.PreviewState
 import com.just1guy.fieldfab.components.DuctSideView
 import com.just1guy.fieldfab.datapersistence.Duct
 import com.just1guy.fieldfab.datapersistence.DuctData
-import java.lang.NumberFormatException
-import kotlin.math.min
+import com.just1guy.fieldfab.datapersistence.UnitsOfMeasure
+import com.just1guy.fieldfab.math.LengthMeasurement
 
 @Composable
 fun WorkshopLayout(
@@ -47,20 +47,46 @@ fun WorkshopLayout(
     }
 }
 
+enum class Keyboard { OPENED, CLOSED }
+
+@Composable
+fun keyboardAsState(): State<Keyboard> {
+    val keyboardState = remember{ mutableStateOf(Keyboard.CLOSED)}
+    val view = LocalView.current
+    DisposableEffect(view) {
+        val onGlobalListener = ViewTreeObserver.OnGlobalLayoutListener {
+            val rect = Rect()
+            view.getWindowVisibleDisplayFrame(rect)
+            val screenH = view.rootView.height
+            val keypadH = screenH - rect.bottom
+            keyboardState.value = if (keypadH > screenH * 0.15) Keyboard.OPENED else Keyboard.CLOSED
+        }
+        view.viewTreeObserver.addOnGlobalLayoutListener(onGlobalListener)
+        onDispose {
+            view.viewTreeObserver.removeOnGlobalLayoutListener(onGlobalListener)
+        }
+    }
+    return keyboardState
+}
+
 @Composable
 fun DuctEditor(kAppData: KotlinDefaultAppState, state: MutableState<AppState>) {
     val faces = listOf("Front", "Back", "Left", "Right", "All")
     var currentFace by remember { mutableStateOf(0) }
     var scrollOffset by remember { mutableStateOf(0F) }
-    var width by remember { mutableStateOf(state.value.currentDuct!!.data.width.toString()) }
-    var depth by remember { mutableStateOf(state.value.currentDuct!!.data.depth.toString()) }
-    var length by remember { mutableStateOf(state.value.currentDuct!!.data.length.toString()) }
-    var offsetx by remember { mutableStateOf(state.value.currentDuct!!.data.offsetx.toString()) }
-    var offsety by remember { mutableStateOf(state.value.currentDuct!!.data.offsety.toString()) }
-    var twidth by remember { mutableStateOf(state.value.currentDuct!!.data.twidth.toString()) }
-    var tdepth by remember { mutableStateOf(state.value.currentDuct!!.data.tdepth.toString()) }
+    var width by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.width, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
+    var depth by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.depth, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
+    var length by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.length, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
+    var offsetx by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.offsetx, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
+    var offsety by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.offsety, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
+    var twidth by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.twidth, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
+    var tdepth by remember { mutableStateOf(LengthMeasurement(state.value.currentDuct!!.data.tdepth, UnitsOfMeasure.METERS).convert(if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).value.toString()) }
     val configuration = LocalConfiguration.current
-    val size = min(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp)
+    val kbState by keyboardAsState()
+    val sideViewSize =
+		min(configuration.screenHeightDp.dp, configuration.screenWidthDp.dp)
+			.div(if (kbState == Keyboard.OPENED) 6.dp else 1.dp).dp
+
 
     TabRow(
         selectedTabIndex = currentFace,
@@ -79,23 +105,24 @@ fun DuctEditor(kAppData: KotlinDefaultAppState, state: MutableState<AppState>) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxWidth()
+            .absolutePadding(top = 42.dp)
     ) {
         Box(modifier = Modifier
-            .size(size)
-            .absolutePadding(top = 42.dp)) {
+            .size(sideViewSize)
+        ) {
             if (faces[currentFace] == "All") {
                 Column {
                     Row {
-                        DuctSideView(side = "Front", state = state, showMeasurements = false)
-                        DuctSideView(side = "Back", state = state, showMeasurements = false)
+                        DuctSideView(side = "Front", state = state, showMeasurements = false, kAppData = kAppData, modifier = Modifier.size(sideViewSize.div(2)))
+                        DuctSideView(side = "Back", state = state, showMeasurements = false, kAppData = kAppData, modifier = Modifier.size(sideViewSize.div(2)))
                     }
                     Row {
-                        DuctSideView(side = "Left", state = state, showMeasurements = false)
-                        DuctSideView(side = "Right", state = state, showMeasurements = false)
+                        DuctSideView(side = "Left", state = state, showMeasurements = false, kAppData = kAppData, modifier = Modifier.size(sideViewSize.div(2)))
+                        DuctSideView(side = "Right", state = state, showMeasurements = false, kAppData = kAppData, modifier = Modifier.size(sideViewSize.div(2)))
                     }
                 }
             } else
-            DuctSideView(side = faces[currentFace], state = state)
+            DuctSideView( side = faces[currentFace], state = state, kAppData = kAppData, modifier = Modifier.size(sideViewSize))
         }
         Column(
             modifier = Modifier
@@ -104,46 +131,53 @@ fun DuctEditor(kAppData: KotlinDefaultAppState, state: MutableState<AppState>) {
         ) {
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = width, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(width = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(width = num.value)))
                 } catch (e: NumberFormatException) {}
                 width = v
-            }, label = {Text("Width")})
+            }, label = {Text("Width")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = depth, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(depth = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(depth = num.value)))
                 } catch (e: NumberFormatException) {}
                 depth = v
-            }, label = {Text("Depth")})
+            }, label = {Text("Depth")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = length, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(length = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(length = num.value)))
                 } catch (e: NumberFormatException) {}
                 length = v
-            }, label = {Text("Length")})
+            }, label = {Text("Length")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = offsetx, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(offsetx = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(offsetx = num.value)))
                 } catch (e: NumberFormatException) {}
                 offsetx = v
-            }, label = {Text("Offset X")})
+            }, label = {Text("Offset X")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = offsety, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(offsety = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(offsety = num.value)))
                 } catch (e: NumberFormatException) {}
                 offsety = v
-            }, label = {Text("Offset Y")})
+            }, label = {Text("Offset Y")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = twidth, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(twidth = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(twidth = num.value)))
                 } catch (e: NumberFormatException) {}
                 twidth = v
-            }, label = {Text("Transition Width")})
+            }, label = {Text("Transition Width")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
             OutlinedTextField(modifier = Modifier.fillMaxWidth(), value = tdepth, onValueChange = { v ->
                 try {
-                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(tdepth = v.toFloat())))
+                    val num = LengthMeasurement(v.toFloat(), if (kAppData.isMetric.value) UnitsOfMeasure.MILLIMETERS else UnitsOfMeasure.INCHES).convert(UnitsOfMeasure.METERS)
+                    state.value = state.value.copy(currentDuct = Duct.make(state.value.currentDuct!!.data.copy(tdepth = num.value)))
                 } catch (e: NumberFormatException) {}
                 tdepth = v
-            }, label = {Text("Transition Depth")})
+            }, label = {Text("Transition Depth")}, trailingIcon = {Text(if (kAppData.isMetric.value) "mm" else "inches")})
         }
     }
 }

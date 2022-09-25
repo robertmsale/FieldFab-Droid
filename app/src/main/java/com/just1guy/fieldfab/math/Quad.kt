@@ -1,10 +1,10 @@
 package com.just1guy.fieldfab.math
 
-import com.just1guy.fieldfab.datapersistence.V3
+import Vector3Float
 
 data class Quad(
-    val v0: V3,
-    val v1: V3,
-    val v2: V3,
-    val v3: V3
+    val v0: Vector3Float,
+    val v1: Vector3Float,
+    val v2: Vector3Float,
+    val v3: Vector3Float
 )

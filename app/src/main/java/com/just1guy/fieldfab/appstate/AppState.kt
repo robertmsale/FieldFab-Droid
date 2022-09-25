@@ -10,9 +10,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.alorma.compose.settings.storage.base.SettingValueState
 import com.alorma.compose.settings.storage.base.rememberBooleanSettingState
-import com.just1guy.fieldfab.datapersistence.Duct
-import com.just1guy.fieldfab.datapersistence.DuctData
-import com.just1guy.fieldfab.datapersistence.DuctFaceALL
+import com.just1guy.fieldfab.datapersistence.*
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import java.io.File
+
 //import org.reduxkotlin.createThreadSafeStore
 
 /**
@@ -82,30 +85,47 @@ enum class Sheets {
     NONE
 }
 
+enum class WorkingViews {
+	WORKSHOP,
+	THREE_D,
+	AR
+}
+
 data class AppState(
-    val sheetsShown: Sheets = Sheets.NONE,
-    val popupSaveSuccessful: Boolean = false,
-    val ductData: List<DuctData> = listOf(),
-    val currentFace: DuctFaceALL = DuctFaceALL.FRONT,
-    val currentDuctIndex: Int? = 0,
-    val currentDuct: Duct? = null,
-    val currentPage: String = "FieldFab",
-    val lastPage: String = "FieldFab",
+	val sheetsShown: Sheets = Sheets.NONE,
+	val popupSaveSuccessful: Boolean = false,
+	val ductData: List<DuctData> = listOf(),
+	val currentFace: DuctFaceALL = DuctFaceALL.FRONT,
+	val currentDuctIndex: Int? = 0,
+	val currentDuct: Duct? = null,
+	val currentPage: String = "FieldFab",
+	val lastPage: String = "FieldFab",
+	val workingViews: WorkingViews = WorkingViews.WORKSHOP,
     ) {
     companion object {
         // TODO: Initialize certain values from persistent storage
         val INITIAL_STATE = AppState()
         val TEST_STATE = AppState(
-            ductData = listOf(DuctData(
-                name = "Test Duct",
-                width = 0.05F,
-                depth = 0.05F,
-                length = 0.05F,
-                offsetx = 0.005F,
-                offsety = 0.005F,
-                twidth = 0.05F,
-                tdepth = 0.05F
-            ))
+            ductData = listOf(
+                DuctData(
+                    name = "Test Duct",
+                    width = 1f,
+                    depth = 1f,
+                    length = 1f,
+                    offsetx = 0.375f,
+                    offsety = 0f,
+                    twidth = 1f,
+                    tdepth = 1f,
+//                    tabsData = TabsData(
+//                        front = TabSidesData(
+//                            top = TabData(1, 0.0F),
+//                            bottom = TabData(1, 0.0127F),
+//                            left = TabData(1, 0.0254F),
+//                            right = TabData(1, 0.0254F),
+//                        )
+//                    )
+                )
+            )
         )
     }
 }

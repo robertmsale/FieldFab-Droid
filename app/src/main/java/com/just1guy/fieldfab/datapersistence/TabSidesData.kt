@@ -1,6 +1,13 @@
 package com.just1guy.fieldfab.datapersistence
 
-data class TabSidesData(var top: TabData, var bottom: TabData, var left: TabData, var right: TabData) {
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class TabSidesData(
+    var top: TabData = TabData(),
+    var bottom: TabData = TabData(),
+    var left: TabData = TabData(),
+    var right: TabData = TabData()) {
     operator fun get(side: TabSide): TabData {
         return when (side) {
             TabSide.TOP -> top
@@ -15,6 +22,22 @@ data class TabSidesData(var top: TabData, var bottom: TabData, var left: TabData
             TabSide.BOTTOM -> bottom = to
             TabSide.LEFT -> left = to
             TabSide.RIGHT -> right = to
+        }
+    }
+    operator fun get(side: String): TabData {
+        return when (side) {
+            "t", "top", "Top" -> top
+            "b", "bottom", "Bottom" -> bottom
+            "l", "left", "Left" -> left
+            else -> right
+        }
+    }
+    operator fun set(side: String, to: TabData) {
+        when (side) {
+            "t", "top", "Top" -> top = to
+            "b", "bottom", "Bottom" -> bottom = to
+            "l", "left", "Left" -> left = to
+            "r", "right", "Right" -> right = to
         }
     }
 }

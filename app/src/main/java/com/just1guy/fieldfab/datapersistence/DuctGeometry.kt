@@ -1,39 +1,39 @@
 package com.just1guy.fieldfab.datapersistence
 
-import Vector2
+import Vector2Float
+import Vector3Float
 import com.just1guy.fieldfab.math.Quad
 import com.just1guy.fieldfab.math.angle
 import com.just1guy.fieldfab.math.crossed
-import java.lang.Math.*
 
 enum class UVMode { STRETCH_XY, STRETCH_X, STRETCH_Y, SIZE_TO_WORLD_XY, SIZE_TO_WORLD_X }
 
-fun getNormal(v0: V3, v1: V3, v2: V3): V3 {
+fun getNormal(v0: Vector3Float, v1: Vector3Float, v2: Vector3Float): Vector3Float {
     val edgev0v1 = v1.subtracted(v0)
     val edgev1v2 = v2.subtracted(v1)
 
     return edgev0v1.crossed(edgev1v2)
 }
 
-class GeometryBuilder(
+class GeometryBuilder (
     val quads: List<Quad>,
-    val texSize: Vector2 = Vector2(1F, 1F),
+    val texSize: Vector2Float = Vector2Float(1F, 1F),
     val uvMode: UVMode = UVMode.STRETCH_XY,
 ) {
     fun getGeometryParts(): GeometryComplete {
-        var positions: List<V3> = listOf()
-        var normals: List<V3> = listOf()
-        var tcoords: List<Vector2> = listOf()
-        var faceIndices: List<UShort> = listOf()
+        var positions: List<Vector3Float> = listOf()
+		var normals: List<Vector3Float> = listOf()
+		var tcoords: List<Vector2Float> = listOf()
+		var faceIndices: List<UShort> = listOf()
 
         for (quad in quads) {
             val nvf1 = getNormal(quad.v0, quad.v1, quad.v2)
             val nvf2 = getNormal(quad.v0, quad.v2, quad.v3)
 
-            var uv0 = Vector2(0F, 0F)
-            var uv1 = Vector2(0F, 0F)
-            var uv2 = Vector2(0F, 0F)
-            var uv3 = Vector2(0F, 0F)
+            var uv0: Vector2Float
+            var uv1: Vector2Float
+            var uv2: Vector2Float
+            var uv3: Vector2Float
 
             val zero = 0F
 
@@ -47,10 +47,10 @@ class GeometryBuilder(
                         (quad.v1.subtracted(quad.v2)).length(),
                         (quad.v0.subtracted(quad.v3)).length()
                     )
-                    uv0 = Vector2(longestUEdge, longestVEdge)
-                    uv1 = Vector2(zero, longestVEdge)
-                    uv2 = Vector2(zero, zero)
-                    uv3 = Vector2(longestUEdge, zero)
+                    uv0 = Vector2Float(longestUEdge, longestVEdge)
+                    uv1 = Vector2Float(zero, longestVEdge)
+                    uv2 = Vector2Float(zero, zero)
+                    uv3 = Vector2Float(longestUEdge, zero)
                 }
                 UVMode.SIZE_TO_WORLD_XY -> {
                     val v2v0 = quad.v0.subtracted(quad.v2)
@@ -64,16 +64,16 @@ class GeometryBuilder(
                     val v0angle = v2v3.angle(to = v2v0)
                     val v1angle = v2v3.angle(to = v2v1)
 
-                    uv0 = Vector2(x = kotlin.math.cos(v0angle) * v2v0Mag, y = kotlin.math.sin(v0angle) * v2v0Mag)
-                    uv1 = Vector2(x = kotlin.math.cos(v1angle) * v2v1Mag, y = kotlin.math.sin(v1angle) * v2v1Mag)
-                    uv2 = Vector2(x = zero, y = zero)
-                    uv3 = Vector2(x = v2v3Mag, y = zero)
+                    uv0 = Vector2Float(x = kotlin.math.cos(v0angle) * v2v0Mag, y = kotlin.math.sin(v0angle) * v2v0Mag)
+                    uv1 = Vector2Float(x = kotlin.math.cos(v1angle) * v2v1Mag, y = kotlin.math.sin(v1angle) * v2v1Mag)
+                    uv2 = Vector2Float(x = zero, y = zero)
+                    uv3 = Vector2Float(x = v2v3Mag, y = zero)
                 }
                 else -> {
-                    uv0 = Vector2(1F, 1F)
-                    uv1 = Vector2(0F, 1F)
-                    uv2 = Vector2(0F, 0F)
-                    uv3 = Vector2(1F, 0F)
+                    uv0 = Vector2Float(1F, 1F)
+                    uv1 = Vector2Float(0F, 1F)
+                    uv2 = Vector2Float(0F, 0F)
+                    uv3 = Vector2Float(1F, 0F)
                 }
             }
 
@@ -97,9 +97,9 @@ class GeometryBuilder(
 }
 
 data class GeometryComplete(
-    val vertices: List<V3>,
-    val normals: List<V3>,
-    val tcoords: List<Vector2>,
+    val vertices: List<Vector3Float>,
+    val normals: List<Vector3Float>,
+    val tcoords: List<Vector2Float>,
     val faceIndices: List<UShort>,
 ) {
 
